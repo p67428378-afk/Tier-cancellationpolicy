@@ -52,7 +52,7 @@ def test_cancel_booking_100_percent_refund(client):
     })
     assert response.status_code == 200
     data = response.get_json()
-    assert data['cancellationStatus'] == 'success'
+    assert data['status'] == 'success' # Changed from cancellationStatus to status
     assert data['refundAmount'] == 100.00
     assert data['membershipTierApplied'] == 'Gold'
 
@@ -63,7 +63,7 @@ def test_cancel_booking_75_percent_refund(client):
     })
     assert response.status_code == 200
     data = response.get_json()
-    assert data['cancellationStatus'] == 'success'
+    assert data['status'] == 'success' # Changed from cancellationStatus to status
     assert data['refundAmount'] == 75.00
     assert data['membershipTierApplied'] == 'Silver'
 
@@ -74,7 +74,7 @@ def test_cancel_booking_50_percent_refund(client):
     })
     assert response.status_code == 200
     data = response.get_json()
-    assert data['cancellationStatus'] == 'success'
+    assert data['status'] == 'success' # Changed from cancellationStatus to status
     assert data['refundAmount'] == 50.00
     assert data['membershipTierApplied'] == 'Gold'
 
@@ -124,6 +124,6 @@ def test_cancel_booking_no_show(client):
     })
     assert response.status_code == 200
     data = response.get_json()
-    assert data['cancellationStatus'] == 'success'
+    assert data['status'] == 'success' # Changed from cancellationStatus to status
     assert data['refundAmount'] == 0.00
     assert data['membershipTierApplied'] == 'Bronze'
