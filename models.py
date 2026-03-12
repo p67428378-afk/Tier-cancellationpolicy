@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, Float, Enum
-from sqlalchemy.ext.declarative import declarative_base
-from datetime import datetime
+from sqlalchemy.orm import declarative_base
+from datetime import datetime, UTC
 import enum
 
 Base = declarative_base()
@@ -27,7 +27,7 @@ class Booking(Base):
     __tablename__ = 'bookings'
     id = Column(String, primary_key=True)
     user_id = Column(String, nullable=False)
-    check_in_date_time = Column(DateTime, nullable=False)
+    check_in_date_time = Column(DateTime(timezone=True), nullable=False)
     booking_status = Column(Enum(BookingStatus), nullable=False, default=BookingStatus.CONFIRMED)
     total_booking_amount = Column(Float, nullable=False)
 
@@ -39,7 +39,7 @@ class CancellationLog(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     booking_id = Column(String, nullable=False)
     user_id = Column(String, nullable=False)
-    cancellation_date_time = Column(DateTime, nullable=False, default=datetime.utcnow)
+    cancellation_date_time = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC))
     membership_tier_at_cancellation = Column(Enum(MembershipTier), nullable=False)
     days_before_check_in = Column(Float, nullable=False)
     refund_percentage_applied = Column(Float, nullable=False)
