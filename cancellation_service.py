@@ -70,7 +70,7 @@ class CancellationService:
             self.db_session.commit()
 
             return {
-                "cancellationStatus": "success",
+                "status": "success", # Changed from cancellationStatus to status
                 "refundAmount": round(refund_amount, 2),
                 "refundTransactionId": refund_transaction_id,
                 "membershipTierApplied": membership_tier.value
@@ -78,7 +78,7 @@ class CancellationService:
         else:
             self.db_session.rollback()
             return {
-                "cancellationStatus": "failed",
+                "status": "failed",
                 "message": payment_response.get("message", "Payment gateway error"),
                 "errorCode": "PAYMENT_GATEWAY_ERROR"
             }
