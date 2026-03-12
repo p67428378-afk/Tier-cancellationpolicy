@@ -4,7 +4,7 @@ from database import Session, init_db
 from models import User, Booking, MembershipTier, BookingStatus
 from cancellation_service import CancellationService
 from payment_gateway import PaymentGateway
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -24,15 +24,15 @@ with app.app_context():
     # Add dummy bookings for testing
     if not db_session.query(Booking).filter_by(id="booking101").first():
         # Booking 1: Check-in 8 days from now (100% refund)
-        db_session.add(Booking(id="booking101", user_id="user123", check_in_date_time=datetime.utcnow() + timedelta(days=8), total_booking_amount=200.00, booking_status=BookingStatus.CONFIRMED))
+        db_session.add(Booking(id="booking101", user_id="user123", check_in_date_time=datetime.now(UTC) + timedelta(days=8), total_booking_amount=200.00, booking_status=BookingStatus.CONFIRMED))
         # Booking 2: Check-in 3 days from now (partial refund based on tier)
-        db_session.add(Booking(id="booking102", user_id="user456", check_in_date_time=datetime.utcnow() + timedelta(days=3), total_booking_amount=300.00, booking_status=BookingStatus.CONFIRMED))
+        db_session.add(Booking(id="booking102", user_id="user456", check_in_date_time=datetime.now(UTC) + timedelta(days=3), total_booking_amount=300.00, booking_status=BookingStatus.CONFIRMED))
         # Booking 3: Check-in 12 hours from now (less than 24h, partial/no refund)
-        db_session.add(Booking(id="booking103", user_id="user789", check_in_date_time=datetime.utcnow() + timedelta(hours=12), total_booking_amount=400.00, booking_status=BookingStatus.CONFIRMED))
+        db_session.add(Booking(id="booking103", user_id="user789", check_in_date_time=datetime.now(UTC) + timedelta(hours=12), total_booking_amount=400.00, booking_status=BookingStatus.CONFIRMED))
         # Booking 4: Already cancelled
-        db_session.add(Booking(id="booking104", user_id="user123", check_in_date_time=datetime.utcnow() + timedelta(days=5), total_booking_amount=150.00, booking_status=BookingStatus.CANCELLED))
+        db_session.add(Booking(id="booking104", user_id="user123", check_in_date_time=datetime.now(UTC) + timedelta(days=5), total_booking_amount=150.00, booking_status=BookingStatus.CANCELLED))
         # Booking 5: Check-in 2 hours ago (no-show/after check-in)
-        db_session.add(Booking(id="booking105", user_id="user456", check_in_date_time=datetime.utcnow() - timedelta(hours=2), total_booking_amount=250.00, booking_status=BookingStatus.CONFIRMED))
+        db_session.add(Booking(id="booking105", user_id="user456", check_in_date_time=datetime.now(UTC) - timedelta(hours=2), total_booking_amount=250.00, booking_status=BookingStatus.CONFIRMED))
         db_session.commit()
         print("Dummy bookings added.")
     db_session.close()
@@ -52,7 +52,7 @@ def cancel_booking(booking_id):
 
     result = cancellation_service.cancel_booking(user_id, booking_id, reason_for_cancellation)
 
-    if result["cancellationStatus"] == "success":
+    if result["status"] == "success": # Changed from cancellationStatus to status
         return jsonify(result), 200
     else:
         status_code = 500
