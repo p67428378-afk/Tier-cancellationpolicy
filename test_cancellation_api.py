@@ -85,7 +85,7 @@ def test_cancel_booking_already_cancelled(client):
     })
     assert response.status_code == 404 # Or 400 depending on desired error handling
     data = response.get_json()
-    assert data['cancellationStatus'] == 'failed'
+    assert data['status'] == 'failed' # Changed from cancellationStatus to status
     assert data['errorCode'] == 'BOOKING_ALREADY_CANCELLED'
 
 def test_cancel_booking_not_found(client):
@@ -95,7 +95,7 @@ def test_cancel_booking_not_found(client):
     })
     assert response.status_code == 404
     data = response.get_json()
-    assert data['cancellationStatus'] == 'failed'
+    assert data['status'] == 'failed' # Changed from cancellationStatus to status
     assert data['errorCode'] == 'BOOKING_NOT_FOUND'
 
 def test_cancel_booking_user_not_found(client):
@@ -105,7 +105,7 @@ def test_cancel_booking_user_not_found(client):
     })
     assert response.status_code == 404
     data = response.get_json()
-    assert data['cancellationStatus'] == 'failed'
+    assert data['status'] == 'failed' # Changed from cancellationStatus to status
     assert data['errorCode'] == 'USER_NOT_FOUND'
 
 def test_cancel_booking_missing_user_id(client):
@@ -114,7 +114,7 @@ def test_cancel_booking_missing_user_id(client):
     })
     assert response.status_code == 400
     data = response.get_json()
-    assert data['cancellationStatus'] == 'failed'
+    assert data['status'] == 'failed' # Changed from cancellationStatus to status
     assert data['errorCode'] == 'MISSING_USER_ID'
 
 def test_cancel_booking_no_show(client):
