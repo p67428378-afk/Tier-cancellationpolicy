@@ -1,7 +1,7 @@
 import pytest
 from app import app, Session, init_db
 from models import User, Booking, MembershipTier, BookingStatus
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 @pytest.fixture(scope='module')
 def client():
@@ -18,27 +18,27 @@ def client():
             
             # Booking for 8 days from now (100% refund)
             db_session.add(Booking(id="test_booking_100_percent", user_id="test_user_gold", 
-                                   check_in_date_time=datetime.utcnow() + timedelta(days=8), 
+                                   check_in_date_time=datetime.now(UTC) + timedelta(days=8), 
                                    total_booking_amount=100.00, booking_status=BookingStatus.CONFIRMED))
             
             # Booking for 3 days from now (Silver, 75% refund)
             db_session.add(Booking(id="test_booking_75_percent", user_id="test_user_silver", 
-                                   check_in_date_time=datetime.utcnow() + timedelta(days=3), 
+                                   check_in_date_time=datetime.now(UTC) + timedelta(days=3), 
                                    total_booking_amount=100.00, booking_status=BookingStatus.CONFIRMED))
             
             # Booking for 12 hours from now (Gold, 50% refund)
             db_session.add(Booking(id="test_booking_50_percent", user_id="test_user_gold", 
-                                   check_in_date_time=datetime.utcnow() + timedelta(hours=12), 
+                                   check_in_date_time=datetime.now(UTC) + timedelta(hours=12), 
                                    total_booking_amount=100.00, booking_status=BookingStatus.CONFIRMED))
             
             # Already cancelled booking
             db_session.add(Booking(id="test_booking_cancelled", user_id="test_user_bronze", 
-                                   check_in_date_time=datetime.utcnow() + timedelta(days=2), 
+                                   check_in_date_time=datetime.now(UTC) + timedelta(days=2), 
                                    total_booking_amount=100.00, booking_status=BookingStatus.CANCELLED))
             
             # Booking in the past (No-show, 0% refund)
             db_session.add(Booking(id="test_booking_no_show", user_id="test_user_bronze", 
-                                   check_in_date_time=datetime.utcnow() - timedelta(hours=1), 
+                                   check_in_date_time=datetime.now(UTC) - timedelta(hours=1), 
                                    total_booking_amount=100.00, booking_status=BookingStatus.CONFIRMED))
             
             db_session.commit()
