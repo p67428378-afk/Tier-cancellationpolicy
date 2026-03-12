@@ -33,7 +33,15 @@ class CancellationService:
             return {"status": "failed", "message": "Booking already cancelled", "errorCode": "BOOKING_ALREADY_CANCELLED"}
 
         cancellation_date_time = datetime.now(UTC)
-        time_difference: timedelta = booking.check_in_date_time - cancellation_date_time
+        
+        # Ensure booking.check_in_date_time is timezone-aware for subtraction
+        # If it's naive, assume it's UTC and make it aware
+        if booking.check_in_date_time.tzinfo is None:
+            booking_check_in_utc = booking.check_in_date_time.replace(tzinfo=UTC)
+        else:
+            booking_check_in_utc = booking.check_in_date_time
+
+        time_difference: timedelta = booking_check_in_utc - cancellation_date_time
         days_before_check_in = time_difference.total_seconds() / (24 * 3600)
 
         membership_tier = user.membership_tier
