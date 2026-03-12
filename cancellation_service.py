@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from sqlalchemy.orm import Session
 from models import User, Booking, CancellationLog, CancellationPolicyRule, MembershipTier, BookingStatus
 from payment_gateway import PaymentGateway
@@ -32,7 +32,7 @@ class CancellationService:
         if booking.booking_status == BookingStatus.CANCELLED:
             return {"status": "failed", "message": "Booking already cancelled", "errorCode": "BOOKING_ALREADY_CANCELLED"}
 
-        cancellation_date_time = datetime.utcnow()
+        cancellation_date_time = datetime.now(UTC)
         time_difference: timedelta = booking.check_in_date_time - cancellation_date_time
         days_before_check_in = time_difference.total_seconds() / (24 * 3600)
 
